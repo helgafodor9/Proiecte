@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_arith.all;
+
+ENTITY Numarator3_sec IS
+  PORT (
+ clk : in std_logic;
+         enable3 : in std_logic;
+         reset3 : in std_logic;
+         data_out3 : out std_logic_vector(1 downto 0);
+         finish3 : out std_logic
+    );
+END Numarator3_sec;
+
+ARCHITECTURE Num3 OF Numarator3_sec IS
+
+signal count3 :std_logic_vector(1 downto 0);
+
+BEGIN
+
+process(clk,reset3)
+begin
+if reset3='1' then
+      count3<="00";
+elsif clk'EVENT and clk='1' then
+      if enable3='1' then
+          count3<=count3+1;
+      end if;
+end if;
+end process;
+
+process(count3)
+begin
+if count3="11" then
+    finish3<='1';
+else
+    finish3<='0';
+end if;
+end process;
+
+data_out3<=count3;
+
+END Num3;

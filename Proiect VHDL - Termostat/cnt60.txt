@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_arith.all;
+
+ENTITY Numarator_intervalTIMP IS
+  PORT (
+ clk : in std_logic;
+         reset60 : in std_logic;
+         enable60 : in std_logic;
+         data_out60 : out std_logic_vector(5 downto 0);
+         finish60 : out std_logic
+    );
+END Numarator_intervalTIMP;
+
+ARCHITECTURE Num60 OF Numarator_intervalTIMP IS
+
+signal count60 : std_logic_vector(5 downto 0); 
+
+BEGIN
+
+process(clk,reset60)
+begin
+if reset60='1' then 
+      count60<="000000";
+elsif clk'EVENT and clk='1' then
+      if enable60='1' then
+          count60<=count60+1;
+      end if;
+end if;
+end process;
+
+process(count60)
+begin
+if count60="111100" then 
+    finish60<='1';
+else 
+    finish60<='0';
+end if;
+end process;
+
+data_out60<=count60;
+
+END Num60;

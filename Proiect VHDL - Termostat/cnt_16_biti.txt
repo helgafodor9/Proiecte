@@ -1,0 +1,47 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_arith.all;
+
+ENTITY CNT_2_LA_16 IS
+  PORT (
+         clk : in std_logic;
+         reset : in std_logic;
+         en_16: in std_logic;
+         data_out : out std_logic_vector(15 downto 14)
+    );
+END CNT_2_LA_16;
+
+ARCHITECTURE TypeArchitecture OF CNT_2_LA_16 IS
+
+signal count : std_logic_vector(15 downto 0);
+
+BEGIN
+
+process(clk,reset)
+begin
+if reset='1' then
+       count<="0000000000000000";
+elsif clk'EVENT and clk='1' then
+      if en_16='1' and count="1111111111111111" then
+          count<="0000000000000000";
+      else
+          count<=count+1;
+      end if;
+end if;
+end process;
+
+data_out<=count;
+
+END TypeArchitecture;

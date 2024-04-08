@@ -1,0 +1,1143 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+
+public class ShowTable extends JFrame{
+
+    private JPanel mainPanel;
+    private JTabbedPane tabbedPane1;
+    private JPanel Retete;
+    private JPanel Categorie;
+    private JPanel Ingrediente;
+    private JPanel Set_Ingrediente;
+    private JPanel ex_16_03;
+    private JButton showTableButton;
+    private JButton UPDATEButton;
+    private JButton INSERTButton;
+    private JButton DELETEButton;
+    private JButton clearButton;
+    private JTable tableRetete;
+    private JLabel retetaID;
+    private JTextField textRetetaId;
+    private JLabel numeReteta;
+    private JTextField textNumeReteta;
+    private JLabel descriereReteta;
+    private JTextField textDescriereReteta;
+    private JLabel categIdReteta;
+    private JTextField textCategIdReteta;
+    private JLabel vegeReteta;
+    private JTextField textVegReteta;
+    private JLabel timpReteta;
+    private JTextField textTimpReteta;
+    private JLabel portiiReteta;
+    private JTextField textPortiiReteta;
+    private JLabel deleteIdReteta;
+    private JTextField textDeleteReteta;
+    private JButton btnShowTableCategorie;
+    private JButton btnUpdateCategorie;
+    private JButton btnClearCategorie;
+    private JButton btnInsertCategorie;
+    private JButton btnDeleteCategorie;
+    private JTable tableCategorie;
+    private JLabel categIdCategorie;
+    private JTextField textCategIdCategorie;
+    private JLabel tipCategorie;
+    private JTextField textTipCategorie;
+    private JLabel deleteCategIdCategorie;
+    private JTextField textDeleteCategorie;
+    private JButton btnShowTableIngrediente;
+    private JButton btnClearIngrediente;
+    private JButton btnInsertIngredinte;
+    private JButton btnDeleteIngrediente;
+    private JButton btnUpdateIngrediente;
+    private JTable tableIngrediente;
+    private JLabel ingredIdIngrediente;
+    private JTextField textIngredIdIngrediente;
+    private JLabel denumireIngrediente;
+    private JTextField textDenumireIngrediente;
+    private JLabel deleteIngrdIdIngrediente;
+    private JTextField textDeleteIngrediente;
+    private JButton btnShowTableSetIngrediente;
+    private JButton btnClearSetIngrediente;
+    private JButton btnInsertSetIngrediente;
+    private JButton deleteSetIngrediente;
+    private JButton btnUpdateSetIngrediente;
+    private JTable tableSetIngrediente;
+    private JLabel retetaIdSetIngrediente;
+    private JTextField textRetetaIdSetIngrediente;
+    private JLabel ingredIdSetIngrediente;
+    private JTextField textIngredIdSetIngrediente;
+    private JLabel cantitateSetIngrediente;
+    private JTextField textCantitateSetIngrediente;
+    private JLabel umSetIngrediente;
+    private JTextField textUmSetIngrediente;
+    private JLabel comentSetIngrediente;
+    private JTextField textComrntSetIngrediente;
+    private JLabel deleteRetetaIdSetIngrediente;
+    private JTextField textDeleteRetetaIdSetIngrediente;
+    private JLabel deleteIngredIdSetIngrediente;
+    private JTextField textDeleteIngredIdSetIngrediente;
+    private JLabel updateRetetaIdRetete;
+    private JTextField textUpdateRetetaIdRetete;
+    private JLabel updateNumeRetete;
+    private JTextField textUpdateNumeRetete;
+    private JLabel updateDescriereRetete;
+    private JTextField textUpdateDescriereRetete;
+    private JLabel updateCategIdRetete;
+    private JTextField textUpdateCategIDRetete;
+    private JLabel updateVegRetete;
+    private JTextField textUpdateVegRetete;
+    private JLabel updateTimpRetete;
+    private JTextField textUpdateTimpRetete;
+    private JLabel updatePortiiRetete;
+    private JTextField textUpdatePortiiRetete;
+    private JLabel updateCategIdCategorie;
+    private JTextField textUpdateCategIdCategorie;
+    private JLabel updateTipCategorie;
+    private JTextField textUpdateTipCategorie;
+    private JLabel updateIngredIdIngrediente;
+    private JTextField textUpdateIngredIdIngrediente;
+    private JLabel updateIngredientIngrediente;
+    private JTextField textUpdateIngredientIngrediente;
+    private JLabel updateRetetaIdSetIngrediente;
+    private JTextField textUpdateRetetaIdSetIngrediente;
+    private JLabel updateIngredIdSetIngrediente;
+    private JTextField textUpdateIngredIdSetIngrediente;
+    private JLabel updateCantitateSetIngrediente;
+    private JTextField textUpdateCantitateSetIngrediente;
+    private JLabel updateUmSetIngrediente;
+    private JTextField textUpdateUmSetIngrediente;
+    private JLabel updateComSetIngrediente;
+    private JTextField textUpdateComSetIngrediente;
+    private JPanel ex_16_04;
+    private JPanel ex_16_05;
+    private JPanel ex_16_06;
+    private JButton btnEx1603A;
+    private JButton btnEx1603B;
+    private JButton btnClearEx1603B;
+    private JTable tableEx1603A;
+    private JTable tableEx1603B;
+    private JButton btnClearEx1603A;
+    private JButton btnEx1604A;
+    private JButton btnClear1604B;
+    private JButton btnClear1604A;
+    private JButton btnEx1604B;
+    private JTable tableEx1604A;
+    private JTable tableEx1604B;
+    private JButton btnEx1605A;
+    private JButton btnClearEx1605B;
+    private JButton btnClearEx1605A;
+    private JButton btnEx1605B;
+    private JTable tableEx1605A;
+    private JTable tableEx1605B;
+    private JButton btnEx1606A;
+    private JButton btnClearEx1606B;
+    private JButton btnClearEx1606A;
+    private JButton btnEx1606B;
+    private JTable tableEx1606A;
+    private JTable tableEx1606B;
+
+    public ShowTable() {
+        setContentPane(mainPanel);
+        setTitle("Retete Online");
+        setSize(1000, 900);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setVisible(true);
+
+        showTableButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Password");
+                    Statement st = con.createStatement();
+                    String query = "select * from RETETA";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableRetete.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String retetaId, denumire, descriere, categID, vegetariana, timpPreparare, portii;
+                    while (rs.next()) {
+                        retetaId = rs.getString(1);
+                        denumire = rs.getString(2);
+                        descriere = rs.getString(3);
+                        categID = rs.getString(4);
+                        vegetariana = rs.getString(5);
+                        timpPreparare = rs.getString(6);
+                        portii = rs.getString(7);
+                        String[] row = {retetaId, denumire, descriere, categID, vegetariana, timpPreparare, portii};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableRetete.setModel(new DefaultTableModel());
+            }
+        });
+
+        INSERTButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String retetaId = textRetetaId.getText();
+                String nume = textNumeReteta.getText();
+                String descriere = textDescriereReteta.getText();
+                String categId = textCategIdReteta.getText();
+                String vegetariana = textVegReteta.getText();
+                String timpPreparare = textTimpReteta.getText();
+                String portii = textPortiiReteta.getText();
+
+                try {
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "insert into RETETA (RETETA_ID, NUME, DESCRIERE, CATEG_ID, VEGETARIANA, TIMP_PREPARARE, PORTII)" +
+                            "values (?, ?, ?, ?, ?, ?, ?)";
+
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, retetaId);
+                    statement.setString(2, nume);
+                    statement.setString(3, descriere);
+                    statement.setString(4, categId);
+                    statement.setString(5, vegetariana);
+                    statement.setString(6, timpPreparare);
+                    statement.setString(7, portii);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Inserted successfyully.");
+                    }
+
+                    statement.close();
+                    con.close();
+
+
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+        UPDATEButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String retetaId = textUpdateRetetaIdRetete.getText();
+                String nume = textUpdateNumeRetete.getText();
+                String descriere = textUpdateDescriereRetete.getText();
+                String categId = textUpdateCategIDRetete.getText();
+                String vegetariana = textUpdateVegRetete.getText();
+                String timpPreparare = textUpdateTimpRetete.getText();
+                String portii = textUpdatePortiiRetete.getText();
+
+
+                try {
+
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "update RETETA set nume=?, descriere=?, categ_id=?, vegetariana=?, timp_preparare=?, portii=? where reteta_id=?";
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, nume);
+                    statement.setString(2, descriere);
+                    statement.setString(3, categId);
+                    statement.setString(4, vegetariana);
+                    statement.setString(5, timpPreparare);
+                    statement.setString(6, portii);
+                    statement.setString(7, retetaId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Updated successfully.");
+                    }
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        DELETEButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String retetaId = textDeleteReteta.getText();
+
+                try {
+                    Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "delete from RETETA where reteta_id=?";
+
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, retetaId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Deleted successfully.");
+                    }
+
+                    connection.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        btnShowTableCategorie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "select * from CATEGORIE";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableCategorie.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String categId, tip;
+                    while (rs.next()) {
+                        categId = rs.getString(1);
+                        tip = rs.getString(2);
+
+                        String[] row = {categId, tip};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        btnClearCategorie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableCategorie.setModel(new DefaultTableModel());
+            }
+        });
+
+        btnInsertCategorie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String categId = textCategIdCategorie.getText();
+                String tip = textTipCategorie.getText();
+
+                try {
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "insert into CATEGORIE (categ_id, tip)" + "values (?, ?)";
+
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, categId);
+                    statement.setString(2, tip);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Inserted successfyully.");
+                    }
+
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        btnDeleteCategorie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String categId = textDeleteCategorie.getText();
+
+                try {
+                    Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "delete from CATEGORIE where categ_id=?";
+
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, categId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Deleted successfully.");
+                    }
+
+                    connection.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+        btnUpdateCategorie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String categId = textUpdateCategIdCategorie.getText();
+                String tip = textUpdateTipCategorie.getText();
+
+                try {
+
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "update CATEGORIE set tip=? where categ_id=?";
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, tip);
+                    statement.setString(2, categId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Updated successfully.");
+                    }
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        btnShowTableIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "select * from INGREDIENT";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableIngrediente.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String ingredId, ingredient;
+                    while (rs.next()) {
+                        ingredId = rs.getString(1);
+                        ingredient = rs.getString(2);
+
+                        String[] row = {ingredId, ingredient};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        btnClearIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableIngrediente.setModel(new DefaultTableModel());
+            }
+        });
+
+
+        btnInsertIngredinte.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String ingredId = textIngredIdIngrediente.getText();
+                String ingredient = textDenumireIngrediente.getText();
+
+                try {
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "insert into INGREDIENT (ingred_id, ingredient)" + "values (?, ?)";
+
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, ingredId);
+                    statement.setString(2, ingredient);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Inserted successfyully.");
+                    }
+
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        btnDeleteIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String ingredId = textDeleteIngrediente.getText();
+
+                try {
+                    Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "delete from INGREDIENT where ingred_id=?";
+
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, ingredId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Deleted successfully.");
+                    }
+
+                    connection.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        btnUpdateIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String ingredId = textUpdateIngredIdIngrediente.getText();
+                String ingredient = textUpdateIngredientIngrediente.getText();
+
+                try {
+
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "update INGREDIENT set ingredient=? where ingred_id=?";
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, ingredient);
+                    statement.setString(2, ingredId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Updated successfully.");
+                    }
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+        btnShowTableSetIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "select * from SET_INGREDIENTE";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableSetIngrediente.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String retetaId, ingredId, cantitate, um, comentarii;
+                    while (rs.next()) {
+                        retetaId = rs.getString(1);
+                        ingredId = rs.getString(2);
+                        cantitate = rs.getString(3);
+                        um = rs.getString(4);
+                        comentarii = rs.getString(5);
+
+                        String[] row = {retetaId, ingredId, cantitate, um, comentarii};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+        });
+
+
+        btnClearSetIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableSetIngrediente.setModel(new DefaultTableModel());
+            }
+        });
+
+
+        btnInsertSetIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String retetaId = textRetetaIdSetIngrediente.getText();
+                String ingredId = textIngredIdSetIngrediente.getText();
+                String cantitate = textCantitateSetIngrediente.getText();
+                String um = textUmSetIngrediente.getText();
+                String comentarii = textComrntSetIngrediente.getText();
+
+                try {
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "insert into SET_INGREDIENTE (reteta_id, ingred_id, cantitate, um, comentarii)" + "values (?, ?, ?, ?, ?)";
+
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, retetaId);
+                    statement.setString(2, ingredId);
+                    statement.setString(3, cantitate);
+                    statement.setString(4, um);
+                    statement.setString(5, comentarii);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Inserted successfyully.");
+                    }
+
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        deleteSetIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String retetaId = textDeleteRetetaIdSetIngrediente.getText();
+                String ingredId = textDeleteIngredIdSetIngrediente.getText();
+
+                try {
+                    Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "delete from SET_INGREDIENTE where reteta_id=? and ingred_id=?";
+
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setString(1, retetaId);
+                    statement.setString(2, ingredId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Deleted successfully.");
+                    }
+
+                    connection.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        btnUpdateSetIngrediente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String retetaId = textUpdateRetetaIdSetIngrediente.getText();
+                String ingredId = textUpdateIngredIdSetIngrediente.getText();
+                String cantitate = textUpdateCantitateSetIngrediente.getText();
+                String um = textUpdateUmSetIngrediente.getText();
+                String comentarii = textUpdateComSetIngrediente.getText();
+
+                try {
+
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+
+                    String query = "update SET_INGREDIENTE set cantitate=?, um=?, comentarii=? where reteta_id=? and ingred_id=?";
+                    PreparedStatement statement = con.prepareStatement(query);
+                    statement.setString(1, cantitate);
+                    statement.setString(2, um);
+                    statement.setString(3, comentarii);
+                    statement.setString(4, retetaId);
+                    statement.setString(5, ingredId);
+
+                    int rows = statement.executeUpdate();
+
+                    if (rows > 0) {
+                        System.out.println("Updated successfully.");
+                    }
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+        btnEx1603A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "select * from RETETA where vegetariana='N' order by timp_preparare";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1603A.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String retetaId, denumire, descriere, categID, vegetariana, timpPreparare, portii;
+                    while (rs.next()) {
+                        retetaId = rs.getString(1);
+                        denumire = rs.getString(2);
+                        descriere = rs.getString(3);
+                        categID = rs.getString(4);
+                        vegetariana = rs.getString(5);
+                        timpPreparare = rs.getString(6);
+                        portii = rs.getString(7);
+
+                        String[] row = {retetaId, denumire, descriere, categID, vegetariana, timpPreparare, portii};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+        });
+
+        btnClearEx1603A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1603A.setModel(new DefaultTableModel());
+            }
+        });
+
+
+        btnClearEx1603B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1603B.setModel(new DefaultTableModel());
+            }
+        });
+
+        btnEx1603B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "select * from INGREDIENT where ingredient like ('%e')";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1603B.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String ingredId, ingredient;
+                    while (rs.next()) {
+                        ingredId = rs.getString(1);
+                        ingredient = rs.getString(2);
+
+                        String[] row = {ingredId, ingredient};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+
+        btnEx1604A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "select R.nume, R.descriere from RETETA R join SET_INGREDIENTE SI on R.reteta_id = SI.reteta_id join INGREDIENT I on SI.ingred_id = I.ingred_id where (SI.cantitate = 100) and (SI.um = 'gr') and (I.ingredient = 'Lapte')";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1604A.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String denumire, descriere;
+                    while (rs.next()) {
+                        denumire = rs.getString(1);
+                        descriere = rs.getString(2);
+
+                        String[] row = {denumire, descriere};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+        });
+
+        btnClear1604A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1604A.setModel(new DefaultTableModel());
+            }
+        });
+
+        btnEx1604B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "SELECT DISTINCT R1.nume AS nume1, R2.nume AS nume2 FROM Reteta R1\n JOIN Reteta R2 ON (R1.reteta_id < R2.reteta_id AND R1.categ_id = R2.categ_id AND R1.timp_preparare = R2.timp_preparare) ORDER BY nume1, nume2";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1604B.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String denumire1, denumire2;
+                    while (rs.next()) {
+                        denumire1 = rs.getString(1);
+                        denumire2 = rs.getString(2);
+
+                        String[] row = {denumire1, denumire2};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+        btnClear1604B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1604B.setModel(new DefaultTableModel());
+            }
+        });
+
+
+        btnEx1605A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "SELECT R.nume, R.descriere, R.timp_preparare FROM Reteta R WHERE R.vegetariana = 'N' AND EXISTS (SELECT 1 FROM Reteta R2 WHERE R2.vegetariana = 'N' HAVING MIN(R2.timp_preparare) = R.timp_preparare)";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1605A.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String denumire,descriere, timpPreparare;
+                    while (rs.next()) {
+                        denumire = rs.getString(1);
+                        descriere = rs.getString(2);
+                        timpPreparare = rs.getString(3);
+
+                        String[] row = {denumire, descriere,timpPreparare};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+        });
+        btnClearEx1605A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1605A.setModel(new DefaultTableModel());
+            }
+        });
+
+        btnEx1605B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("java.sql.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement st = con.createStatement();
+                    String query = "SELECT * FROM Reteta R WHERE EXISTS(SELECT 1 FROM Set_ingrediente SI JOIN Ingredient I ON SI.ingred_id = I.ingred_id WHERE I.ingredient = 'Ceapa' AND R.nume <> 'Varza a la Cluj' AND SI.cantitate < (SELECT cantitate FROM Set_Ingrediente WHERE reteta_id = (SELECT reteta_id FROM Reteta WHERE nume = 'Varza a la Cluj') AND ingred_id = (SELECT ingred_id FROM Ingredient WHERE ingredient = 'Ceapa')) AND R.reteta_id = SI.reteta_id)";
+                    ResultSet rs = st.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1605B.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    for (int i = 0; i < cols; i++)
+                        colName[i] = rsmd.getColumnName(i + 1);
+                    model.setColumnIdentifiers(colName);
+
+                    String retetaId, denumire, descriere, categID, vegetariana, timpPreparare, portii;
+                    while (rs.next()) {
+                        retetaId = rs.getString(1);
+                        denumire = rs.getString(2);
+                        descriere = rs.getString(3);
+                        categID = rs.getString(4);
+                        vegetariana = rs.getString(5);
+                        timpPreparare = rs.getString(6);
+                        portii = rs.getString(7);
+
+                        String[] row = {retetaId, denumire, descriere, categID, vegetariana, timpPreparare, portii};
+                        model.addRow(row);
+                    }
+
+                    st.close();
+                    con.close();
+
+                } catch (ClassNotFoundException | SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+        btnClearEx1605B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1605B.setModel(new DefaultTableModel());
+            }
+        });
+        btnEx1606A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String min = "Timp preparare minim";
+                String max = "Timp preparare maxim";
+
+                try {
+
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement statement = con.createStatement();
+                    String query = "SELECT MIN(timp_preparare), MAX(timp_preparare)  FROM RETETA";
+                    ResultSet rs = statement.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1606A.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    colName[0] = min;
+                    colName[1] = max;
+                    model.setColumnIdentifiers(colName);
+
+                    String minim, maxim;
+
+                    while (rs.next()) {
+                        minim = rs.getString(1);
+                        maxim = rs.getString(2);
+                        String[] row = {minim, maxim};
+                        model.addRow(row);
+                    }
+
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+
+        btnClearEx1606A.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1606A.setModel(new DefaultTableModel());
+            }
+        });
+        btnEx1606B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String average = "AVERAGE";
+
+                try {
+
+                    Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "SYSTEM", "Fodor.Helga123!");
+                    Statement statement = con.createStatement();
+                    String query = "SELECT AVG(SI.cantitate) FROM Set_ingrediente SI JOIN Ingredient I ON I.ingred_id = SI.ingred_id JOIN Reteta R ON R.reteta_id = SI.reteta_id  JOIN Categorie Ca ON R.categ_id = Ca.categ_id WHERE I.ingredient = 'Usturoi' AND Ca.tip = 'Tocana' ";
+                    ResultSet rs = statement.executeQuery(query);
+                    ResultSetMetaData rsmd = rs.getMetaData();
+
+                    DefaultTableModel model = (DefaultTableModel) tableEx1606B.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName = new String[cols];
+                    colName[0] = average;
+                    model.setColumnIdentifiers(colName);
+
+                    String avg;
+
+                    while (rs.next()) {
+                        avg = rs.getString(1);
+                        String[] row = {avg};
+                        model.addRow(row);
+                    }
+
+                    statement.close();
+                    con.close();
+
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+
+
+            }
+        });
+        btnClearEx1606B.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableEx1606B.setModel(new DefaultTableModel());
+            }
+        });
+    }
+
+
+
+
+    public static void main(String[] args) {
+        ShowTable myFrame = new ShowTable();
+
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
+}

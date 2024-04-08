@@ -1,0 +1,120 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY Unitatile IS
+  PORT (
+  Clk : in std_logic;
+          Reset :in std_logic;
+          Start : in std_logic
+          Optiune_temp_min : in std_logic_vector(3 downto 0);
+          Optiune_temp_max : in std_logic_vector(3 downto 0);
+          Optiune_ora : in std_logic_vector(4 downto 0);
+          Choose_temp_min : out std_logic;
+          Choose_temp_max : out std_logic;
+          OK_temp_min : in std_logic;
+          OK_temp_max : in std_logic;
+          Choose_timp : out std_logic;
+          OK_timp : in std_logic;
+          INCALZIRE : out std_logic;
+          INTERVAL_DE_TIMP : out std_logic;
+          FINISH : out std_logic
+       );
+END Unitatile;
+
+ARCHITECTURE uc_ue OF Unitatile IS
+
+component Unitate_de_executie is
+   PORT( clk : in std_logic;
+         Reset : in std_logic;
+         Temp_min : in std_logic_vector(3 downto 0);
+         Temp_max : in std_logic_vector(3 downto 0);
+         Ora_aleasa : in std_logic_vector(4 downto 0);
+         Ld_temp : in std_logic;
+         En_temp : in std_logic;
+         En_5 : in std_logic;
+         En_ora : in std_logic;
+         Fin_cnt_temp : out std_logic;
+         Fin_cnt_ora : out std_logic;
+         Fin_cnt_5 : out std_logic
+end component;
+
+component Unitate_de_control is
+PORT (
+          Clk : in std_logic;
+          Reset : in std_logic;
+          Ld_temp : out std_logic; -- semnale spre si dinspre UC
+          En_temp_3 : out std_logic;
+          En_5 : out std_logic;
+          En_ora : out std_logic;
+          Fin_cnt_temp : in std_logic;
+          Fin_cnt_ora : in std_logic;
+          Fin_cnt_5 : in std_logic;
+          START : in std_logic; -- semnale spre si dinspre utilizator
+          Alege_temp_min : out std_logic;
+          Temp_OK_MIN : in std_logic;
+          Alege_temp_max : out std_logic;
+          Temp_OK_MAX : in std_logic;
+          Alege_timp : out std_logic;
+          Timp_OK : in std_logic;
+          Incalzire : out std_logic;
+          Interval_de_timp : out std_logic;
+          Finish : out std_logic
+       );
+
+end component;
+
+signal Ld_temp : std_logic;
+signal En_temp : std_logic;
+signal En_5 : std_logic;
+signal En_ora : std_logic;
+signal Fin_cnt_temp : std_logic;
+signal Fin_cnt_ora: std_logic;
+signal Fin_cnt_5: std_logic;
+
+BEGIN
+
+Unitate_executie : Unitatea_de_executie port map( clk => Clk,
+                                                  Reset => Reset
+                                                  Temp_min => Optiune_temp_min,
+                                                  Temp_max => Optiune_temp_max,
+                                                  Ora_aleasa => Optiune_ora,
+                                                  Ld_temp => Ld_temp,
+                                                  En_temp => En_temp,
+                                                  En_5 => En_5,
+                                                  En_ora => En_ora,
+                                                  Fin_cnt_temp => Fin_cnt_temp,
+                                                  Fin_cnt_ora => Fin_cnt_ora,
+                                                  Fin_cnt_5 => Fin_cnt_5);
+
+Unitate_control : Uniatatea_de_control port map( Clk => Clk,
+                                                 Reset => Reset
+                                                 Ld_temp => Ld_temp,
+                                                 En_temp_3 => En_temp,
+                                                 En_5 => En_5,
+                                                 En_ora =>nEn_ora,
+                                                 Fin_cnt_temp => Fin_cnt_temp,
+                                                 Fin_cnt_ora => Fin_cnt_ora,
+                                                 Fin_cnt_5 => Fin_cnt_5,
+                                                 START => Start,
+                                                 Alege_temp_min => Choose_temp_min,
+                                                 Temp_OK_MIN => OK_temp_min,
+                                                 Alege_temp_max => Choose_temp_max,
+                                                 Temp_OK_MAX => OK_temp_max,
+                                                 Alege_timp => Choose_timp,
+                                                 Timp_OK => OK_timp,
+                                                 Incalzire => INCALZIRE,
+                                                 Interval_de_timp => INTERVAL_DE_TIMP,
+                                                 Finish => FINISH);
+                                                 
+END uc_ue;

@@ -1,0 +1,101 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY Unitatea_de_executie IS
+  PORT (
+ clk : in std_logic;
+         Reset : in std_logic;
+         Temp_min : in std_logic_vector(3 downto 0);
+         Temp_max : in std_logic_vector(3 downto 0);
+         Ora_aleasa : in std_logic_vector(4 downto 0);
+         Ld_temp : in std_logic;
+         En_temp : in std_logic;
+         En_5 : in std_logic;
+         En_ora : in std_logic;
+         Fin_cnt_temp : out std_logic;
+         Fin_cnt_ora : out std_logic;
+         Fin_cnt_5 : out std_logic
+    );
+END Unitatea_de_executie;
+
+ARCHITECTURE executie OF Unitatea_de_executie IS
+
+component Memorie_TEMP is
+    PORT(  adresa : in std_logic_vector(3 downto 0);
+           data_out : out std_logic_vector(4 downto 0));
+end component;
+
+
+component Memorie_TIMP is
+    PORT(  adresa: in std_logic_vector(4 downto 0);
+           data_out : out std_logic_vector(4 downto 0));
+end component;
+
+
+component Numarator5_min is
+    PORT(  clk : in std_logic;
+           reset5 : in std_logic;
+           enable5 : in std_logic;
+           data_out5 : out std_logic_vector(2 downto 0);
+           finish5 : out std_logic);
+end component;
+
+
+component Numarator_creste_TEMP is
+    PORT(  clk : in std_logic;
+           en_tmp : in std_logic;
+           rst_tmp : in std_logic;
+           ld_tmp : in std_logic;
+           start_temp : in std_logic_vector(4 downto 0);
+           finish_temp : in std_logic_vector(4 downto 0);
+           num_temp : out std_logic_vector(4 downto 0);
+           finish_cnt_temp : out std_logic);
+end component;
+
+
+component Numarator_intervalTIMP is
+    PORT(  clk : in std_logic;
+           reset60 : in std_logic;
+           enable60 : in std_logic;
+           data_out60 : out std_logic_vector(5 downto 0);
+           finish60 : out std_logic);
+end component;
+
+--data signal
+signal Min_Temp : std_logic_vector(4 downto 0);
+signal Max_Temp : std_logic_vector(4 downto 0);
+signal Timp : std_logic_vector(4 downto 0);
+
+
+--cnt_temp signal
+signal Num_temp : std_logic_vector(4 downto 0);
+
+--cnt_5 signal
+signal Num_5 : std_logic_vector(2 downto 0);
+
+--cnt_ora signal
+signal Num_ora : std_logic_vector(5 downto 0);
+
+BEGIN
+
+ROM_TEMP_1 : Memorie_TEMP port map(Temp_min, Min_Temp);
+ROM_TEMP_2 : Memorie_TEMP port map(Temp_max, Max_Temp);
+ROM_TIMP : Memorie_TIMP port map(Ora_aleasa, Timp);
+CNT_5 : Numarator5_min port map(clk, Reset, En_5, Num_5, Fin_cnt_5);
+CNT_TEMP : Numarator_creste_TEMP port map(clk, En_temp, Reset, Ld_temp, Min_Temp , Max_Temp, Num_temp, Fin_cnt_temp);
+CNT_ORA : Numarator_intervalTIMP port map(clk, Reset, En_ora, Num_ora, Fin_cnt_ora);
+         
+
+END executie;
+

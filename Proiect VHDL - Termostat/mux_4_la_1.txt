@@ -1,0 +1,46 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY MUX_4_1 IS
+  PORT (
+   d0, d1, d2, d3 : in std_logic_vector(3 downto 0);  -- Intrările MUX-ului
+           optiune : in std_logic_vector(1 downto 0);  -- Linii de selectare (2 biți pentru 4 intrări)
+           data_out : out std_logic_vector(3 downto 0)                    -- Ieșirea MUX-ului
+        
+    );
+END MUX_4_1;
+
+ARCHITECTURE TypeArchitecture OF MUX_4_1 IS
+
+BEGIN
+
+process(d0, d1, d2, d3, optiune)
+    begin
+        case optiune is
+            when "00" => 
+            data_out <= d0;
+            when "01" => 
+            data_out <= d1;
+            when "10" => 
+            data_out <= d2;
+            when "11" => 
+            data_out <= d3;
+            when others => 
+            data_out <= "0000";  
+        end case;
+    end process;
+
+
+
+END TypeArchitecture;

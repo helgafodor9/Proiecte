@@ -1,0 +1,65 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY Afisare_temperaturi IS
+  PORT (
+   clk : in std_logic;
+           reset : in std_logic;
+           en_16 : in std_logic;
+           d0_zecimal_temp_min : in std_logic_vector(3 downto 0);
+           d1_unitati_temp_min : in std_logic_vector(3 downto 0);
+           d2_zecimal_temp_max : in std_logic_vector(3 downto 0);
+           d3_unitati_temp_max : in std_logic_vector(3 downto 0)
+       );
+END Afisare_temperaturi;
+
+ARCHITECTURE TypeArchitecture OF Afisare_temperaturi IS
+
+component MUX_4_1 is
+    PORT (
+           d0, d1, d2, d3 : in std_logic_vector(3 downto 0);  -- Intrările MUX-ului
+           optiune : in std_logic_vector(1 downto 0);  -- Linii de selectare (2 biți pentru 4 intrări)
+           data_out : out std_logic_vector(3 downto 0)                    -- Ieșirea MUX-ului
+          );
+end component;
+
+component CNT_2_LA_16 is
+   PORT (  clk : in std_logic;
+           reset : in std_logic;
+           en_16: in std_logic;
+           data_out : out std_logic_vector(15 downto 0)
+        );
+end component;
+
+component Seven_segment is
+  PORT (
+          numar : in std_logic_vector(3 downto 0);
+          segment : out std_logic_vector(6 downto 0)
+       );
+
+end component;
+
+signal doi_biti : std_logic_vector(15 downto 14);
+signal numar : std_logic_vector(3 downto 0);
+signal segment : std_logic_vector(6 downto 0);
+signal seg_ales : std_logic_vector(4 downto 0);
+
+BEGIN
+
+Divizor : CNT_2_LA_16 port map(clk, reset, en_16, doi_biti);
+MUX_digit : MUX_4_1 port map(d0_zecimal_temp_min, d1_unitati_temp_min, d2_zecimal_temp_max, d3_unitati_temp_max, doi_biti, numar);
+Afisor_7_segmente : Seven_segment port map(numar, segment);
+MUX_ssd : MUX_4_1 port map("1000", "0100", "0010", "0001", doi_biti, seg_ales);
+
+END TypeArchitecture;

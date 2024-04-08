@@ -1,0 +1,33 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+
+ENTITY Memorie_TIMP IS
+  PORT (
+ adresa: in std_logic_vector(4 downto 0);
+         data_out : out std_logic_vector(4 downto 0)
+    );
+END Memorie_TIMP;
+
+ARCHITECTURE rom_timp OF Memorie_TIMP IS
+
+type rom_type is array (0 to 23) of std_logic_vector (4 downto 0);
+
+signal rom : rom_type:=("00000","00001","00010","00011","00100","00101","00110","00111","01000","01001","01010","01011","01100","01101","01110","01111","10000","10001","10010","10011","10100","10101","10110","10111",others=>"00000");
+
+BEGIN
+
+data_out<=rom(conv_integer(adresa));
+
+END rom_timp;

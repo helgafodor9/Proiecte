@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_arith.all;
+
+ENTITY Numarator5_min IS
+  PORT (
+ clk : in std_logic;
+         reset5 : in std_logic;
+         enable5 : in std_logic;
+         data_out5 : out std_logic_vector(2 downto 0);
+         finish5 : out std_logic
+    );
+END Numarator5_min;
+
+ARCHITECTURE Num5 OF Numarator5_min IS
+
+signal count5 : std_logic_vector(2 downto 0);
+
+BEGIN
+
+process(clk,reset5)
+begin
+if reset5='1' then
+       count5<="000";
+elsif clk'EVENT and clk='1' then
+      if enable5='1' then
+          count5<=count5+1;
+      end if;
+end if;
+end process;
+
+process(count5)
+begin
+if count5="101" then
+    finish5<='1';
+else
+    finish5<='0';
+end if;
+end process;
+
+data_out5<=count5;
+
+END Num5;

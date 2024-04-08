@@ -1,0 +1,146 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY Unitatea_de_control IS
+  PORT (
+  Clk : in std_logic;
+          Reset : in std_logic;
+          Ld_temp : out std_logic; -- semnale spre si dinspre UC
+          En_temp_3 : out std_logic;
+          En_5 : out std_logic;
+          En_ora : out std_logic;
+          Fin_cnt_temp : in std_logic;
+          Fin_cnt_ora : in std_logic;
+          Fin_cnt_3 : in std_logic;
+          Fin_cnt_5 : in std_logic;
+          START : in std_logic; -- semnale spre si dinspre utilizator
+          Alege_temp_min : out std_logic;
+          Temp_OK_MIN : in std_logic;
+          Alege_temp_max : out std_logic;
+          Temp_OK_MAX : in std_logic;
+          Alege_timp : out std_logic;
+          Timp_OK : in std_logic;
+          Incalzire : out std_logic;
+          Interval_de_timp : out std_logic;
+          Finish : out std_logic
+       );
+END Unitatea_de_control;
+
+ARCHITECTURE control OF Unitatea_de_control IS
+
+type stari is (Astept, Astept_temp_min, Astept_temp_max, Astept_timp, Incalzire_apartament,
+               Numarare_timp, Final);
+signal Stare, Next_Stare : stari;
+
+BEGIN
+
+stare_actuala : process(Clk,Reset)
+begin
+if Reset='1' then
+   Stare<=Astept;
+elsif Clk'EVENT and Clk='1' then
+      Stare<=Next_Stare;
+end if;
+end process;
+
+tranzitii : process(Stare,  Fin_cnt_temp, Fin_cnt_ora, Fin_cnt_3,  Fin_cnt_5, START,
+            Temp_OK_MIN, Temp_OK_MAX, Timp_OK)
+begin
+Alege_temp_min<='0';
+Alege_temp_max<='0';
+Alege_timp<='0';
+Ld_temp<='0';
+En_temp_3<='0';
+En_ora<='0';
+En_5<='0';
+Finish<='0';
+Incalzire<='0';
+Interval_de_timp<='0';
+
+case Stare is
+     when Astept =>
+          if START='1'then
+             Next_Stare<=Astept_temp_min;
+          else
+             Next_Stare<=Astept;
+          end if;
+             
+     when Astept_temp_min =>
+          Alege_temp_min<='1';
+          En_5<='1';
+          if Temp_OK_MIN='0' then
+            if Fin_cnt_5='1' then
+                Next_Stare<=Astept;
+             else
+                Next_Stare<=Astept_temp_min;
+             end if;
+          else
+             Next_Stare<=Astept_temp_max;
+          end if;
+          
+     when Astept_temp_max =>
+          Alege_temp_max<='1';
+          En_5<='1';
+          if Temp_OK_MAX='0' then
+             if Fin_cnt_5='1' then
+                Next_Stare<=Astept;
+             else
+                Next_Stare<=Astept_temp_max;
+             end if;
+          else
+             Next_Stare<=Astept_timp;
+          end if;
+
+      when Astept_timp =>
+          Alege_timp<='1';
+          En_5<='1';
+          if Timp_OK='0' then
+             if Fin_cnt_5='1' then
+                Next_Stare<=Astept;
+             else
+                Next_Stare<=Astept_timp;
+             end if;
+          else
+             Next_Stare<=Incalzire_apartament;
+          end if;
+          
+     when Incalzire_apartament =>
+          Incalzire<='1';
+          Ld_temp<='1';
+          En_temp_3<='1';
+          if Fin_cnt_temp='1' then
+              Next_Stare<=Numarare_timp;
+          else
+              Next_Stare<=Incalzire_apartament;
+          end if;
+
+     when Numarare_timp =>
+          Interval_de_timp<='1';
+          En_ora<='1';
+          if Fin_cnt_ora='1' then
+             Next_Stare<=Final;
+          else
+             Next_Stare<=Numarare_timp;
+          end if;
+
+     when Final =>
+          Finish<='1';
+          Next_Stare<=Astept;
+
+     when others =>
+          Next_Stare<=Astept;
+end case;      
+end process;
+END control;
+

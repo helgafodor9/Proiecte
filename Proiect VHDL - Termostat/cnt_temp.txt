@@ -1,0 +1,81 @@
+--------------------------------------------------------------------------------
+-- Project :
+-- File    :
+-- Autor   :
+-- Date    :
+--
+--------------------------------------------------------------------------------
+-- Description :
+--
+--------------------------------------------------------------------------------
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+USE ieee.std_logic_arith.all;
+
+ENTITY Numarator_creste_TEMP IS
+  PORT (
+ clk : in std_logic;
+         rst_tmp : in std_logic;
+         en_tmp : in std_logic;
+         ld_tmp : in std_logic;
+         start_temp : in std_logic_vector(4 downto 0);
+         finish_temp : in std_logic_vector(4 downto 0);
+         num_temp : out std_logic_vector(4 downto 0);
+         finish_cnt_temp : out std_logic
+         
+    );
+END Numarator_creste_TEMP;
+
+ARCHITECTURE Num_temp OF Numarator_creste_TEMP IS
+
+component Numarator3_sec is
+PORT (
+         clk : in std_logic;
+         enable3 : in std_logic;
+         reset3 : in std_logic;
+         data_out3 : out std_logic_vector(1 downto 0);
+         finish3 : out std_logic
+    );
+
+end component;
+
+signal count : std_logic_vector(4 downto 0);
+signal fin_count_3 : std_logic;
+signal out_biti : std_logic_vector(1 downto 0);
+
+BEGIN
+
+numarator3 : Numarator3_sec port map(clk, en_tmp, rst_tmp, out_biti, fin_count_3);  
+
+process(ld_tmp,rst_tmp)
+begin
+if rst_tmp='1' then
+      count<="00000";
+elsif ld_tmp='1' then
+         count<=start_temp;
+end if;
+end process;
+
+process(fin_count_3)
+begin
+if fin_count_3='1' then
+   count<=count+1;
+   fin_count_3<='0';
+end if;
+end process;
+
+process(count)
+begin
+if count=finish_temp then
+     finish_cnt_temp<='1';
+else
+     finish_cnt_temp<='0';
+end if;
+end process;
+
+num_temp<=count;
+
+END Num_temp;
+
